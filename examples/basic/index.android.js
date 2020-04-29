@@ -13,6 +13,9 @@ import {
 } from 'react-native';
 
 import Video from 'react-native-video';
+import MediaNotification from './MediaNotification';
+const coverImage = require('./landscape.jpg');
+const resolveAssetSource = require('react-native/Libraries/Image/resolveAssetSource');
 
 class VideoPlayer extends Component {
 
@@ -102,6 +105,7 @@ class VideoPlayer extends Component {
           style={styles.fullScreen}
           onPress={() => this.setState({ paused: !this.state.paused })}
         >
+          <MediaNotification title={'LARILA'} description={'Como ser feliz'} cover={resolveAssetSource(coverImage)} />
           <Video
             ref={(ref: Video) => { this.video = ref }}
             /* For ExoPlayer */
