@@ -119,6 +119,8 @@ class VideoPlayer extends Component {
             onAudioBecomingNoisy={this.onAudioBecomingNoisy}
             onAudioFocusChanged={this.onAudioFocusChanged}
             repeat={false}
+            playInBackground={true}
+            playWhenInactive={true}
           />
         </TouchableOpacity>
 

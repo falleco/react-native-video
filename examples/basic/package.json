@@ -1,12 +1,15 @@
 {
-  "name": "VideoPlayer",
+  "name": "BasicVideoPlayer",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "postinstall": "rm -rf node_modules/react-native-video/{examples,node_modules}",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "android": "node node_modules/react-native/local-cli/cli.js run-android",
+    "android:reverse-localhost": "adb reverse tcp:8081 tcp:8081",
+    "ios": "node node_modules/react-native/local-cli/cli.js  run-ios",
+    "rn": "node node_modules/react-native/local-cli/cli.js"
   },
   "dependencies": {
     "react": "16.9.0",
@@ -14,6 +17,7 @@
     "react-native-video": "file:../.."
   },
   "devDependencies": {
+    "@react-native-community/geolocation": "^2.0.2",
     "@babel/core": "^7.6.0",
     "@babel/runtime": "^7.6.0",
     "@react-native-community/eslint-config": "^0.0.5",

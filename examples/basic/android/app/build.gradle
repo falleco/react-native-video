@@ -138,6 +138,14 @@ dependencies {
     implementation project(':react-native-video')
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation 'org.webkit:android-jsc:+'
+
+    implementation 'org.greenrobot:eventbus:3.0.0'
+    implementation('com.google.android.exoplayer:exoplayer:2.10.5') {
+        exclude group: 'com.android.support'
+    }
+    implementation "androidx.core:core:1.1.0"
+    implementation "androidx.media:media:1.1.0"
+
 }
 
 // Run this once to be able to run the application with BUCK
