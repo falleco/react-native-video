@@ -6,8 +6,10 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
@@ -39,15 +41,22 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 import com.videoplayer.MainActivity;
 import com.videoplayer.R;
+import com.videoplayer.RemoteBitmapTask;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class RNMediaNotificationManagerModule extends ReactContextBaseJavaModule {
 
@@ -79,31 +88,6 @@ public class RNMediaNotificationManagerModule extends ReactContextBaseJavaModule
     public void initialize() {
         super.initialize();
         EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onCatalystInstanceDestroy() {
-        super.onCatalystInstanceDestroy();
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Nonnull
-    @Override
-    public String getName() {
-        return "RNMediaNotificationManager";
-    }
-
-    @ReactMethod
-    public void metadata(String title, String description, ReadableMap cover) {
-        this.title = title;
-        this.description = description;
-        Log.d(TAG, "************ COVER");
-        this.cover = cover.getString("uri");
-    }
-
-    @Subscribe
-    public void onBackgroundEnter(BackgroundEnterMessage event) {
-        Log.d(TAG, "************ BACKGROUND ENTER");
 
         PlayerNotificationManager.MediaDescriptionAdapter adapter = new PlayerNotificationManager.MediaDescriptionAdapter() {
             @Override
@@ -143,18 +127,10 @@ public class RNMediaNotificationManagerModule extends ReactContextBaseJavaModule
             @Nullable
             @Override
             public Bitmap getCurrentLargeIcon(Player player, PlayerNotificationManager.BitmapCallback callback) {
-                try {
-
-                    return MediaStore.Images.Media.getBitmap(reactContext.getContentResolver(), Uri.parse(cover));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return getBitmap(reactContext, R.drawable.cover);
-                }
+                new RemoteBitmapTask(reactContext, callback).execute(cover);
+                return null;
             }
 
-            public Bitmap getBitmap(Context context, @DrawableRes int bitmapResource) {
-                return ((BitmapDrawable) context.getResources().getDrawable(bitmapResource)).getBitmap();
-            }
         };
 
         notificationManager = PlayerNotificationManager.createWithNotificationChannel(
@@ -183,13 +159,36 @@ public class RNMediaNotificationManagerModule extends ReactContextBaseJavaModule
             }
         });
 
-        notificationManager.setPlayer(event.getPlayer());
-
         mediaSession = new MediaSessionCompat(reactContext, MEDIA_SESSION_TAG);
-        mediaSession.setActive(true);
+        mediaSession.setActive(false);
         notificationManager.setMediaSessionToken(mediaSession.getSessionToken());
+    }
 
-        Log.d(TAG, "************ BACKGROUND ENTER DONE");
+    @Override
+    public void onCatalystInstanceDestroy() {
+        super.onCatalystInstanceDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Nonnull
+    @Override
+    public String getName() {
+        return "RNMediaNotificationManager";
+    }
+
+    @ReactMethod
+    public void metadata(String title, String description, ReadableMap cover) {
+        this.title = title;
+        this.description = description;
+        Log.d(TAG, "************ COVER");
+        this.cover = cover.getString("uri");
+    }
+
+    @Subscribe
+    public void onBackgroundEnter(BackgroundEnterMessage event) {
+        Log.d(TAG, "************ BACKGROUND ENTER");
+        notificationManager.setPlayer(event.getPlayer());
+        mediaSession.setActive(true);
     }
 
     @Subscribe

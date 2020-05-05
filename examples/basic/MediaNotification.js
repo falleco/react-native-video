@@ -1,26 +1,40 @@
-import { NativeModules, View } from 'react-native';
-import React from 'react';
-import MediaNotificationManager from './MediaNotificationManager'
-
+import { NativeModules, NativeEventEmitter, View } from 'react-native';
+import React, {useEffect} from 'react';
 
 /**
  * Composes `View`.
  *
  * - title: string
  */
-class MediaNotification extends React.Component {
+const MediaNotification = ({metadata, onPlay, onPause, children}) => {
 
-  componentDidMount() {
-    MediaNotificationManager.metadata(this.props.title, this.props.description, this.props.cover);
-  }
+  useEffect(() => {
+    const {title, description, cover} = metadata;
 
-  render() {
-    return (
-      <View>{this.props.children}</View>
+    const MediaNotificationManager = NativeModules.RNMediaNotificationManager;
+    const mediaEmitter = new NativeEventEmitter(MediaNotificationManager);
+
+    const subscriptionOnPlay = mediaEmitter.addListener(
+      'RNVRemoteOnPlay',
+      () => onPlay && onPlay()
     );
-  }
 
-}
+    const subscriptionOnPause = mediaEmitter.addListener(
+      'RNVRemoteOnPause',
+      () => onPause && onPause()
+    );
 
+    MediaNotificationManager.metadata(title, description, cover);
+
+    return () => {
+      subscriptionOnPlay.remove();
+      subscriptionOnPause.remove();
+    };
+  });
+
+    return (
+      <View>{children}</View>
+    );
+};
 
 module.exports = MediaNotification;

@@ -99,13 +99,20 @@ class VideoPlayer extends Component {
     const flexCompleted = this.getCurrentTimePercentage() * 100;
     const flexRemaining = (1 - this.getCurrentTimePercentage()) * 100;
 
+
     return (
       <View style={styles.container}>
         <TouchableOpacity
           style={styles.fullScreen}
           onPress={() => this.setState({ paused: !this.state.paused })}
         >
-          <MediaNotification title={'LARILA'} description={'Como ser feliz'} cover={resolveAssetSource(coverImage)} />
+          <MediaNotification
+            metadata={{
+              title: 'LARILA',
+              description: 'Como ser feliz',
+              cover: {uri: 'https://zenklub.com.br/static/content/journeys/melhore_a_qualidade_seu_sono/landscape.jpg'}
+            }}
+             />
           <Video
             ref={(ref: Video) => { this.video = ref }}
             /* For ExoPlayer */

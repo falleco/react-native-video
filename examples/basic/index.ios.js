@@ -4,7 +4,7 @@ import React, {
 } from 'react';
 
 import {
-  AlertIOS,
+  Alert,
   AppRegistry,
   Platform,
   StyleSheet,
@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 
 import Video,{FilterType} from 'react-native-video';
+import MediaNotification from './MediaNotification';
 
 const filterTypes = [
     FilterType.NONE,
@@ -162,6 +163,15 @@ class VideoPlayer extends Component {
     return (
       <View style={styles.container}>
         <TouchableOpacity style={styles.fullScreen} onPress={() => {this.setState({paused: !this.state.paused})}}>
+          <MediaNotification
+            metadata={{
+              title: 'LARILA',
+              description: 'Como ser feliz',
+              cover: {uri: 'https://zenklub.com.br/static/content/journeys/melhore_a_qualidade_seu_sono/landscape.jpg'}
+            }}
+            onPlay={() => this.setState({paused: false})}
+            onPause={() => this.setState({paused: true})}
+          />
           <Video
             source={require('./broadchurch.mp4')}
             style={styles.fullScreen}
@@ -174,10 +184,12 @@ class VideoPlayer extends Component {
             onLoad={this.onLoad}
             onBuffer={this.onBuffer}
             onProgress={this.onProgress}
-            onEnd={() => { AlertIOS.alert('Done!') }}
+            onEnd={() => { Alert.alert('Done!') }}
             repeat={true}
             filter={this.state.filter}
             filterEnabled={this.state.filterEnabled}
+            playInBackground={true}
+            playWhenInactive={true}
           />
         </TouchableOpacity>
 
@@ -249,6 +261,15 @@ class VideoPlayer extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.fullScreen}>
+          <MediaNotification
+            metadata={{
+              title: 'LARILA',
+              description: 'Como ser feliz',
+              cover: {uri: 'https://zenklub.com.br/static/content/journeys/melhore_a_qualidade_seu_sono/landscape.jpg'}
+            }}
+            onPlay={() => this.setState({paused: false})}
+            onPause={() => this.setState({paused: true})}
+          />
           <Video
             source={require('./broadchurch.mp4')}
             style={videoStyle}
@@ -261,11 +282,13 @@ class VideoPlayer extends Component {
             onLoad={this.onLoad}
             onBuffer={this.onBuffer}
             onProgress={this.onProgress}
-            onEnd={() => { AlertIOS.alert('Done!') }}
+            onEnd={() => { Alert.alert('Done!') }}
             repeat={true}
             controls={this.state.controls}
             filter={this.state.filter}
             filterEnabled={this.state.filterEnabled}
+            playInBackground={true}
+            playWhenInactive={true}
           />
         </View>
         <View style={styles.controls}>
