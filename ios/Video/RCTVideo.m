@@ -214,7 +214,8 @@ static int const RCTVideoUnset = -1;
 - (void)applicationWillResignActive:(NSNotification *)notification
 {
   if (_playInBackground) {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"RNVBackgroundEnter" object:_player];
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:_player forKey:@"player"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"RNVBackgroundEnter" object:nil userInfo:userInfo];
   }
 
   if (_playInBackground || _playWhenInactive || _paused) return;
@@ -226,7 +227,8 @@ static int const RCTVideoUnset = -1;
 - (void)applicationDidEnterBackground:(NSNotification *)notification
 {
   if (_playInBackground) {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"RNVBackgroundEnter" object:_player];
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:_player forKey:@"player"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"RNVBackgroundEnter" object:nil userInfo:userInfo];
     // Needed to play sound in background. See https://developer.apple.com/library/ios/qa/qa1668/_index.html
     [_playerLayer setPlayer:nil];
     [_playerViewController setPlayer:nil];
@@ -237,7 +239,8 @@ static int const RCTVideoUnset = -1;
 {
   [self applyModifiers];
   if (_playInBackground) {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"RNVBackgroundLeave" object:_player];
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:_player forKey:@"player"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"RNVBackgroundLeave" object:nil userInfo:userInfo];
     [_playerLayer setPlayer:_player];
     [_playerViewController setPlayer:_player];
   }
